@@ -8,7 +8,7 @@ const ora = require('ora');
 const chalk = require('chalk');
 const symbols = require('log-symbols');
 
-program.version('1.0.0', '-v, --version')
+program.version('1.1.0', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
@@ -54,4 +54,67 @@ program.version('1.0.0', '-v, --version')
             console.log(symbols.error, chalk.red('项目已存在'));
         }
     })
+
+program.command('add <name>')
+    .action((name) => {
+        if (!fs.existsSync(name)) {
+            const spinner = ora('📁  正在下载模板...');
+            spinner.start();
+            exec(`git clone https://github.com/qiang001/koa2-server-component ${name}`, (err) => {
+                if (err) {
+                    spinner.fail();
+                    console.log(symbols.error, chalk.red(err));
+                } else {
+                    spinner.succeed()
+                        //调整model.js中的名称
+                        const fileName_model = `${name}/model.js`;
+                        const meta_model = {
+                            name,
+                            name_upper_first: name.charAt(0).toUpperCase()+name.slice(1)
+                        }
+                        if (fs.existsSync(fileName_model)) {
+                            const content = fs.readFileSync(fileName_model).toString();
+                            const result = handlebars.compile(content)(meta_model);
+                            fs.writeFileSync(fileName_model, result);
+                        }
+                        //调整controllers.js中的名称
+                        const fileName_controllers = `${name}/controllers.js`;
+                        const meta_controllers = {
+                            name
+                        }
+                        if (fs.existsSync(fileName_controllers)) {
+                            const content = fs.readFileSync(fileName_controllers).toString();
+                            const result = handlebars.compile(content)(meta_controllers);
+                            fs.writeFileSync(fileName_controllers, result);
+                        }
+                        //调整services.js中的名称
+                        const fileName_services = `${name}/services.js`;
+                        const meta_services = {
+                            name_upper_first: name.charAt(0).toUpperCase()+name.slice(1)
+                        }
+                        if (fs.existsSync(fileName_services)) {
+                            const content = fs.readFileSync(fileName_services).toString();
+                            const result = handlebars.compile(content)(meta_services);
+                            fs.writeFileSync(fileName_services, result);
+                        }
+                        //调整routes.js中的名称
+                        const fileName_routes = `${name}/routes.js`;
+                        const meta_routes = {
+                            names: `${name}s`
+                        }
+                        if (fs.existsSync(fileName_routes)) {
+                            const content = fs.readFileSync(fileName_routes).toString();
+                            const result = handlebars.compile(content)(meta_routes);
+                            fs.writeFileSync(fileName_routes, result);
+                        }
+                    console.log(symbols.success, chalk.green('🌈  新业务文件夹已成功添加'))
+                }
+            })
+        } else {
+            // 错误提示文件夹已存在，避免覆盖原有业务文件夹
+            console.log(symbols.error, chalk.red('文件夹已存在'));
+        }
+    })
+
+
 program.parse(process.argv);
