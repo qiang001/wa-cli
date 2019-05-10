@@ -1,7 +1,7 @@
 {
-  "name": "wa-cli",
+  "name": "wa-cli-zq",
   "version": "1.0.0",
-  "description": "",
+  "description": "A cli tool",
   "bin": {
     "wa": "index.js"
   },
@@ -14,7 +14,7 @@
     "url": "git+https://github.com/qiang001/wa-cli.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "qiang001",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/qiang001/wa-cli/issues"
