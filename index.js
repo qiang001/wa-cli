@@ -8,8 +8,8 @@ const ora = require('ora');
 const chalk = require('chalk');
 const symbols = require('log-symbols');
 
-program.version('1.4.1', '-v, --version')
-    .command('init <name>','创建一个 koa2-mongodb-server 项目')
+program.version('1.4.2', '-v, --version')
+    .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
             inquirer.prompt([
@@ -55,7 +55,7 @@ program.version('1.4.1', '-v, --version')
         }
     })
 
-program.command('add <name>','在 api 文件夹下添加新的业务模块，命名规则：小写 && 单数')
+program.command('add <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
             const spinner = ora('📁  正在下载模板...');
