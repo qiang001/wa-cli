@@ -26,7 +26,7 @@ function deleteall(path) {
 }
 
 
-program.version('1.4.3', '-v, --version')
+program.version('1.4.4', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
@@ -60,8 +60,8 @@ program.version('1.4.3', '-v, --version')
                             fs.writeFileSync(fileName, result);
                         }
                         deleteall(`${name}/.git`)
-                        deleteall(`${name}/.gitignore`)
-                        deleteall(`${name}/.README.md`)
+                        fs.unlink(`${name}/.gitignore`)
+                        fs.unlink(`${name}/.README.md`)
                         console.log(symbols.success, chalk.green('🚩  项目初始化完成,请参考以下命令启动项目'));
                         console.log(`     1.进入项目：cd ${name}`)
                         console.log(`     2.安装项目依赖：npm install`)
@@ -129,8 +129,8 @@ program.command('add <name>')
                             fs.writeFileSync(fileName_routes, result);
                         }
                         deleteall(`${name}/.git`)
-                        deleteall(`${name}/.gitignore`)
-                        deleteall(`${name}/.README.md`)
+                        fs.unlink(`${name}/.gitignore`)
+                        fs.unlink(`${name}/.README.md`)
                     console.log(symbols.success, chalk.green('🌈  新业务文件夹已成功添加'))
                 }
             })
