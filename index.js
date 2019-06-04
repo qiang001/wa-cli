@@ -8,7 +8,25 @@ const ora = require('ora');
 const chalk = require('chalk');
 const symbols = require('log-symbols');
 
-program.version('1.4.2', '-v, --version')
+
+function deleteall(path) {
+	var files = [];
+	if(fs.existsSync(path)) {
+		files = fs.readdirSync(path);
+		files.forEach(function(file, index) {
+			var curPath = path + "/" + file;
+			if(fs.statSync(curPath).isDirectory()) { // recurse
+				deleteall(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(path);
+	}
+}
+
+
+program.version('1.4.3', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
@@ -41,6 +59,9 @@ program.version('1.4.2', '-v, --version')
                             const result = handlebars.compile(content)(meta);
                             fs.writeFileSync(fileName, result);
                         }
+                        deleteall(`${name}/.git`)
+                        deleteall(`${name}/.gitignore`)
+                        deleteall(`${name}/.README.md`)
                         console.log(symbols.success, chalk.green('🚩  项目初始化完成,请参考以下命令启动项目'));
                         console.log(`     1.进入项目：cd ${name}`)
                         console.log(`     2.安装项目依赖：npm install`)
@@ -107,6 +128,9 @@ program.command('add <name>')
                             const result = handlebars.compile(content)(meta_routes);
                             fs.writeFileSync(fileName_routes, result);
                         }
+                        deleteall(`${name}/.git`)
+                        deleteall(`${name}/.gitignore`)
+                        deleteall(`${name}/.README.md`)
                     console.log(symbols.success, chalk.green('🌈  新业务文件夹已成功添加'))
                 }
             })
