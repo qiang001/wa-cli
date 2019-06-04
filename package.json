@@ -1,6 +1,6 @@
 {
   "name": "wa-cli-zq",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "A cli tool",
   "bin": {
     "wa": "index.js"
