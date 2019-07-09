@@ -26,7 +26,7 @@ function deleteall(path) {
 }
 
 
-program.version('1.5.0', '-v, --version')
+program.version('1.6.0', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
@@ -62,11 +62,19 @@ program.version('1.5.0', '-v, --version')
                         deleteall(`${name}/.git`)
                         fs.unlinkSync(`${name}/.gitignore`)
                         fs.unlinkSync(`${name}/README.md`)
-                        console.log(symbols.success, chalk.green('🚩  项目初始化完成,请参考以下命令启动项目'));
-                        console.log(`     1.进入项目：cd ${name}`)
-                        console.log(`     2.安装项目依赖：npm install`)
-                        console.log('     3.启动项目：npm run dev / node app')
-                        console.log(symbols.info, chalk.green('强烈推荐安装 nodemon ( npm install nodemon -g ), 然后启动项目命令：npm start / nodemon app'))
+                        const spinner1 = ora('🕑  正在安装项目依赖...');
+                        spinner1.start();
+                        exec(`cd ${name} & npm install`,(err)=>{
+                            if (err) {
+                                spinner1.fail();
+                                console.log(symbols.error, chalk.red(err));
+                            }else{
+                                spinner1.succeed();
+                                console.log(symbols.success, chalk.green('🚩  项目初始化完成,请参考以下命令启动项目'))
+                                console.log(`     1.进入项目：cd ${name}`)
+                                console.log('     2.启动项目：npm start')
+                            }
+                        })
                     }
                 })
             })
@@ -138,38 +146,5 @@ program.command('add <name>')
         }
     })
 
-program.command('create <name>')
-    .action((name) => {
-        if (!fs.existsSync(name)) {
-            inquirer.prompt([
-                {
-                    name: 'description',
-                    message: '请输入项目描述'
-                }
-            ]).then((answers) => {
-                const spinner = ora('🕑  正在下载模板...');
-                spinner.start();
-                exec(`git clone https://github.com/qiang001/vue-template ${name}`, (err) => {
-                    if (err) {
-                        spinner.fail();
-                        console.log(symbols.error, chalk.red(err));
-                    } else {
-                        spinner.succeed();
-                        deleteall(`${name}/.git`)
-                        fs.unlinkSync(`${name}/.gitignore`)
-                        fs.unlinkSync(`${name}/README.md`)
-                        console.log(symbols.success, chalk.green('🚩  项目初始化完成,请参考以下命令启动项目'));
-                        console.log(`     1.进入项目：cd ${name}/app`)
-                        console.log(`     2.安装项目依赖：npm install`)
-                        console.log(symbols.info, chalk.green('启动项目：npm run dev'))
-                        console.log(symbols.info, chalk.green('打包项目：npm run build'))
-                    }
-                })
-            })
-        } else {
-            // 错误提示项目已存在，避免覆盖原有项目
-            console.log(symbols.error, chalk.red('项目已存在'));
-        }
-    })
 
 program.parse(process.argv);
