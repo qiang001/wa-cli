@@ -89,14 +89,14 @@ program.command('add <name>')
         if (!fs.existsSync(name)) {
             const spinner = ora('📁  正在下载模板...');
             spinner.start();
-            exec(`git clone https://github.com/qiang001/koa2-server-component ${name}`, (err) => {
+            exec(`git clone https://github.com/qiang001/koa2-server-component /api/${name}`, (err) => {
                 if (err) {
                     spinner.fail();
                     console.log(symbols.error, chalk.red(err));
                 } else {
                     spinner.succeed()
                     //调整model.js中的名称
-                    const fileName_model = `${name}/model.js`;
+                    const fileName_model = `/api/${name}/model.js`;
                     const meta_model = {
                         name,
                         name_upper_first: name.charAt(0).toUpperCase() + name.slice(1)
@@ -106,8 +106,10 @@ program.command('add <name>')
                         const result = handlebars.compile(content)(meta_model);
                         fs.writeFileSync(fileName_model, result);
                     }
+                    //移动model.js => db文件夹 并且重命名
+                    fs.renameSync(fileName_model,`/db/models/${name}.js`)
                     //调整controllers.js中的名称
-                    const fileName_controllers = `${name}/controllers.js`;
+                    const fileName_controllers = `/api/${name}/controllers.js`;
                     const meta_controllers = {
                         name
                     }
@@ -117,9 +119,10 @@ program.command('add <name>')
                         fs.writeFileSync(fileName_controllers, result);
                     }
                     //调整services.js中的名称
-                    const fileName_services = `${name}/services.js`;
+                    const fileName_services = `/api/${name}/services.js`;
                     const meta_services = {
-                        name_upper_first: name.charAt(0).toUpperCase() + name.slice(1)
+                        name_upper_first: name.charAt(0).toUpperCase() + name.slice(1),
+                        name:name
                     }
                     if (fs.existsSync(fileName_services)) {
                         const content = fs.readFileSync(fileName_services).toString();
@@ -127,7 +130,7 @@ program.command('add <name>')
                         fs.writeFileSync(fileName_services, result);
                     }
                     //调整routes.js中的名称
-                    const fileName_routes = `${name}/routes.js`;
+                    const fileName_routes = `/api/${name}/routes.js`;
                     const meta_routes = {
                         names: `${name}s`
                     }
