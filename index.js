@@ -26,7 +26,7 @@ function deleteall(path) {
 }
 
 
-program.version('1.6.0', '-v, --version')
+program.version('2.0.0', '-v, --version')
     .command('init <name>')
     .action((name) => {
         if (!fs.existsSync(name)) {
